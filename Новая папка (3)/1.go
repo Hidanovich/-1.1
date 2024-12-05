@@ -1,27 +1,38 @@
 package main
 
 import (
- "fmt"
- "math"
+	"fmt"
+	"sync"
 )
 
-func main() 
- var a, b, c float64
- fmt.Scanln(   a,    b,    c)
+type Animal struct {
+	Name              string
+	HighSpeed         int
+	Size              string
+	ClimbTree         bool
+	RecognizeDiseases bool
+}
 
- if a == 0 
-  fmt.Println
-  return
- 
+func animalInfo(animal Animal, wg *sync.WaitGroup) {
+	defer wg.Done()
+	fmt.Printf("Animal: %s, HighSpeed: %d, Size: %s, ClimbTree: %t, RecognizeDiseases: %t\n",
+		animal.Name, animal.HighSpeed, animal.Size, animal.ClimbTree, animal.RecognizeDiseases)
+}
 
- d := b*b - 4*a*c
- switch 
- case d > 0:
-  x1, x2 := (-b+math.Sqrt(d))/(2*a), (-b-math.Sqrt(d))/(2*a)
-  fmt.Printf("Корни уравнения: x1 =
- case d == 0:
-  x := -b / (2 * a)
-  fmt.Printf("Уравнение имеет один корень: x =
- default:
-  fmt.Println
- )
+func main() {
+	var wg sync.WaitGroup
+	animals := []Animal{
+		{"Cheetah", 120, "Medium", false, false},
+		{"Elephant", 25, "Large", false, true},
+		{"Monkey", 30, "Medium", true, false},
+		{"Dog", 45, "Medium", false, true},
+		{"Cat", 30, "Small", true, false},
+	}
+
+	for _, animal := range animals {
+		wg.Add(1)
+		go animalInfo(animal, &wg)
+	}
+
+	wg.Wait()
+}
